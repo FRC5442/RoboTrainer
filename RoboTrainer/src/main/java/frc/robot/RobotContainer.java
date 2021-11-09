@@ -27,7 +27,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 //import com.revrobotics.CANSparkMaxLowLevel;
 
 import frc.robot.subsystems.Intake;
-
+import frc.robot.commands.IntakeCommand;
 
 
 /**
@@ -49,6 +49,7 @@ public class RobotContainer {
   //Intake
   public static WPI_VictorSPX intakeMotor;
   public static Intake intake;
+  public static IntakeCommand intakeCommand;
 
   public RobotContainer() {
     //Joysticks
@@ -58,6 +59,7 @@ public class RobotContainer {
     //Intake
     intakeMotor = new WPI_VictorSPX(11);
     intake = new Intake();
+    intakeCommand = new IntakeCommand(1);
 
 
     configureButtonBindings();
@@ -70,6 +72,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    xboxControllerA.whileHeld(intakeCommand);
 
 
   }
