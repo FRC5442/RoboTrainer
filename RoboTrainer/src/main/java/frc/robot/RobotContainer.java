@@ -7,27 +7,31 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-//import edu.wpi.first.wpilibj2.command.button.Trigger;
-
-//import edu.wpi.first.wpilibj.AnalogPotentiometer;
-//import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
-//import edu.wpi.first.wpilibj.PowerDistributionPanel;
-//import edu.wpi.first.wpilibj.SerialPort;
-
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.SerialPort;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
-
-
-//import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-//import com.kauailabs.navx.frc.AHRS;
-//import com.revrobotics.CANSparkMax;
-//import com.revrobotics.CANSparkMaxLowLevel;
-
+import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.FrontLeftModule;
+import frc.robot.subsystems.FrontRightModule;
+import frc.robot.subsystems.BackLeftModule;
+import frc.robot.subsystems.BackRightModule;
+import frc.robot.subsystems.SwerveGroup;
+import frc.robot.subsystems.SwerveModule;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.Drive;
+import frc.robot.commands.CalibrateModules;
+import frc.robot.commands.CalibrateGyro;
 
 
 /**
@@ -42,24 +46,74 @@ public class RobotContainer {
 
   private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
 
+  public static AHRS navX;
+  public static PowerDistributionPanel pdp;
+
   //Controller variables
   public static Joystick xboxController;
   public static JoystickButton xboxControllerA;
+
+  //Drive
+  public static TalonFX driveMotor1, driveMotor2; //front right
+  public static TalonFX driveMotor3, driveMotor4; //front left
+  public static TalonFX driveMotor5, driveMotor6; //back left
+  public static TalonFX driveMotor7, driveMotor8; //back right
+
+  public static AnalogPotentiometer frontRightAbsEncoder;
+  public static AnalogPotentiometer frontLeftAbsEncoder;
+  public static AnalogPotentiometer backRightAbsEncoder;
+  public static AnalogPotentiometer backLeftAbsEncoder;
+  public static SwerveGroup swerveGroup;
+  public static SwerveModule frontRightModule, frontLeftModule, backLeftModule, backRightModule;
+  public static Drive drive;
+  public static CalibrateGyro calibrateGyro;
+  public static CalibrateModules calibrateModules;
 
   //Intake
   public static WPI_VictorSPX intakeMotor;
   public static Intake intake;
   public static IntakeCommand intakeCommand;
 
+
+
   public RobotContainer() {
     //Joysticks
     xboxController = new Joystick(0);
     xboxControllerA = new JoystickButton(xboxController, 1);
 
+    //Drive
+    driveMotor1 = new TalonFX(1);
+    driveMotor2 = new TalonFX(2);
+    driveMotor3 = new TalonFX(3);
+    driveMotor4 = new TalonFX(4);
+    driveMotor5 = new TalonFX(5);
+    driveMotor6 = new TalonFX(6);
+    driveMotor7 = new TalonFX(7);
+    driveMotor8 = new TalonFX(8);
+
+    frontRightAbsEncoder = new AnalogPotentiometer(0, 360, 0);
+    frontLeftAbsEncoder = new AnalogPotentiometer(1, 360, 0);
+    backLeftAbsEncoder = new AnalogPotentiometer(3, 360, 0);
+    backRightAbsEncoder = new AnalogPotentiometer(2, 360, 0);
+
+    frontRightModule = new FrontRightModule(driveMotor1, driveMotor2, frontRightAbsEncoder);
+    frontLeftModule = new FrontLeftModule(driveMotor3, driveMotor4, frontLeftAbsEncoder);
+    backLeftModule = new BackLeftModule(driveMotor5, driveMotor6, backLeftAbsEncoder);
+    backRightModule = new BackRightModule(driveMotor7, driveMotor8, backRightAbsEncoder);
+    drive = new Drive();
+
+    
+
     //Intake
     intakeMotor = new WPI_VictorSPX(11);
+    
     intake = new Intake();
     intakeCommand = new IntakeCommand(1);
+
+
+    //Other Commands
+    calibrateGyro = new CalibrateGyro();
+    calibrateModules = new CalibrateModules();
 
 
     configureButtonBindings();
